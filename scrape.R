@@ -3,6 +3,10 @@ library(here)
 library(tidyverse)
 library(dobtools)
 library(rvest)
+library(hrbrthemes)
+library(wesanderson)
+
+pal <- wesanderson::wes_palette("Darjeeling1")
 
 kareem <- "https://www.basketball-reference.com/players/a/abdulka01.html"
 
@@ -65,8 +69,28 @@ tidied <- tidy_stats(all_stats)
 
 
 
+tidied_clean <- 
+  tidied %>% 
+  filter(!(str_detect(Season, "[A-Za-z]") |
+           Season == "")) %>% 
+  group_by(player) %>% 
+  rename(
+    season_points = PTS
+  ) %>% 
+  mutate(
+    season_num = row_number(),
+    cumulative_points = cumsum(season_points)
+  ) %>% 
+  select(Season, player, season_num, season_points, cumulative_points) 
 
 
+ggplot(tidied_clean) +
+  geom_point(aes(x = season_num, y = cumulative_points, colour = player),
+             stat = "identity") +
+  labs(x = "Season Number", y = "Cumulative Points", colour = "Player") +
+  ggtitle("Catching Kareem") +
+  theme_ipsum() +
+  scale_colour_manual(values = pal) 
 
 
 
