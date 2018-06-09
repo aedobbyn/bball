@@ -1,4 +1,3 @@
-
 library(here)
 library(tidyverse)
 library(dobtools)
@@ -8,32 +7,18 @@ library(wesanderson)
 
 pal <- wesanderson::wes_palette("Darjeeling1")
 
+
+# Gather urls and names
 kareem <- "https://www.basketball-reference.com/players/a/abdulka01.html"
-
 lebron <- "https://www.basketball-reference.com/players/j/jamesle01.html"
-
 durant <- "https://www.basketball-reference.com/players/d/duranke01.html"
 
 player_urls <- c(kareem, lebron, durant)
-
-player_names <- c("kareem", "lebron", "durant")
-
-kareem_pts_per_game_raw <- 
-  kareem %>% 
-  read_html(kareem) %>% 
-  # html_node("#per_game :nth-child(30)") %>% 
-  # html_nodes(css = "#totals .center , #totals .left , #totals .right") %>%
-  # html_nodes("#totals") %>% 
-  html_nodes("table") %>%
-  html_nodes("#totals") %>%
-  # html_nodes("table") %>% 
-  html_table() 
-
-kareem_pts_per_game <-
-  kareem_pts_per_game[[1]] %>% 
-  as_tibble()
+player_names <- c("Kareem", "Lebron", "Durant")
 
 
+
+# Scrape each url and throw it in a named list, giving it the name nsm[i]
 get_tables <- function(nms = player_names,
                        urls = player_urls) {
   out <- NULL
@@ -51,10 +36,10 @@ get_tables <- function(nms = player_names,
   return(out) 
 }
 
-
 all_stats <- get_tables()
 
 
+# Tidy that list into a dataframe, adding a column for player name
 tidy_stats <- function(lst) {
   out <- NULL
     
@@ -68,11 +53,10 @@ tidy_stats <- function(lst) {
   return(out)
 }
 
-
 tidied <- tidy_stats(all_stats)
 
 
-
+# Filter out seasons that aren't actually seasons
 tidied_clean <- 
   tidied %>% 
   filter(!(str_detect(Season, "[A-Za-z]") |
@@ -88,6 +72,7 @@ tidied_clean <-
   select(Season, player, season_num, season_points, cumulative_points) 
 
 
+# Plot season averages
 ggplot(tidied_clean) +
   geom_point(aes(x = season_num, y = cumulative_points, colour = player),
              stat = "identity") +
@@ -97,10 +82,7 @@ ggplot(tidied_clean) +
   scale_colour_manual(values = pal) 
 
 
+# Check out season number where Lebron surpasses Kareem
 tidied_clean %>% 
   filter(season_num == 15)
-
-
-
-
 
