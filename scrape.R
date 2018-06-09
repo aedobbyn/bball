@@ -38,7 +38,7 @@ get_tables <- function(nms = player_names,
     
     names(this) <- nms[i]
     
-    out <- out %>% append(raw)
+    out <- out %>% append(this)
   }
   return(out) 
 }
@@ -46,6 +46,22 @@ get_tables <- function(nms = player_names,
 
 all_stats <- get_tables()
 
+
+tidy_stats <- function(lst) {
+  out <- NULL
+    
+  for (i in seq_along(lst)) {
+    this <- lst[[i]] %>% 
+      mutate(player = names(lst[i]))
+    
+    out <- out %>% bind_rows(this)
+  }
+  out <- out %>% as_tibble()
+  return(out)
+}
+
+
+tidied <- tidy_stats(all_stats)
 
 
 
