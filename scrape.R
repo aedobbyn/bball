@@ -81,6 +81,8 @@ ggplot(tidied_clean) +
   theme_ipsum() +
   scale_colour_manual(values = pal) 
 
+# Save plot
+ggsave("catching_kareem.png", path = here("img"))
 
 # Check out season number where Lebron surpasses Kareem
 tidied_clean %>% 
