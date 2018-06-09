@@ -77,7 +77,7 @@ ggplot(tidied_clean) +
   geom_point(aes(x = season_num, y = cumulative_points, colour = player),
              stat = "identity") +
   labs(x = "Season Number", y = "Cumulative Points", colour = "Player") +
-  ggtitle("Catching Kareem") +
+  ggtitle("Catching Kareem", subtitle = "Average points per game") +
   theme_ipsum() +
   scale_colour_manual(values = pal) 
 
